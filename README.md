@@ -371,7 +371,7 @@ For example, let's take Helios-Base. **(Diffusers Backend)**
     --num-frames 33 \
     --num-inference-steps 50 \
     --guidance-scale 5.0 \
-    ----backend diffusers
+    --backend diffusers
   ```
 </details>
 
