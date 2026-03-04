@@ -338,7 +338,7 @@ Install sglang-diffusion from source:
 pip install git+https://github.com/sgl-project/sglang.git
 ```
 
-For example, let's take Helios-Base.
+For example, let's take Helios-Base. **(Native Support)**
 
 <details>
   <summary>Click to expand the code</summary>
@@ -353,6 +353,25 @@ For example, let's take Helios-Base.
     --num-frames 33 \
     --num-inference-steps 50 \
     --guidance-scale 5.0
+  ```
+</details>
+
+For example, let's take Helios-Base. **(Diffusers Backend)**
+
+<details>
+  <summary>Click to expand the code</summary>
+
+  ```bash
+  sglang generate \
+    --model-path BestWishYsh/Helios-Base \
+    --prompt "A cat walking on the beach at sunset, cinematic lighting, high quality" \
+    --negative-prompt "Bright tones, overexposed, static, blurred details, subtitles, style, works, paintings, images, static, overall gray, worst quality, low quality, JPEG compression residue, ugly, incomplete, extra fingers, poorly drawn hands, poorly drawn faces, deformed, disfigured, misshapen limbs, fused fingers, still picture, messy background, three legs, many people in the background, walking backwards" \
+    --height 384 \
+    --width 640 \
+    --num-frames 33 \
+    --num-inference-steps 50 \
+    --guidance-scale 5.0 \
+    ----backend diffusers
   ```
 </details>
 
