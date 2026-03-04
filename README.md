@@ -58,8 +58,8 @@ or you can click <a href="https://github.com/PKU-YuanGroup/Helios-Page/blob/main
 * ⏳⏳⏳ Release the [Technical Report](https://github.com/PKU-YuanGroup/Helios-Page/blob/main/helios_technical_report.pdf) on arXiv.
 * `[2025.03.04]` 🚀 Day-0 support for [Ascend-NPU](https://www.hiascend.com)，with sincere gratitude to the Ascend Team for their support.
 * `[2025.03.04]` 🚀 Day-0 support for [Diffusers](https://github.com/huggingface/diffusers)，with special thanks to the HuggingFace Team for their support.
-* `[2025.03.04]` 🚀 Day-0 support for [vLLM-Omni](https://github.com/vllm-project/vllm-omni)，with heartfelt gratitude to the vLLM Team for their support.
-* `[2025.03.04]` 🚀 Day-0 support for [SGLang-Diffusion](https://github.com/sgl-project/sglang)，with huge thanks to the SGLang Team for their support.
+* `[2025.03.04]` 🚀 Day-0 support for [vLLM-Omni](https://github.com/vllm-project/vllm-omni/pull/1604)，with heartfelt gratitude to the vLLM Team for their support.
+* `[2025.03.04]` 🚀 Day-0 support for [SGLang-Diffusion](https://github.com/sgl-project/sglang/pull/19782)，with huge thanks to the SGLang Team for their support.
 * `[2025.03.04]` 🔥 We've released the training/inference code and weights of **Helios-Base**, **Helios-Mid** and **Helios-Distilled**.
 
 
@@ -338,13 +338,21 @@ Install sglang-diffusion from source:
 pip install git+https://github.com/sgl-project/sglang.git
 ```
 
-For example, let's take Helios-Distilled.
+For example, let's take Helios-Base.
 
 <details>
   <summary>Click to expand the code</summary>
 
   ```bash
-  cd sglang
+  sglang generate \
+    --model-path BestWishYsh/Helios-Base \
+    --prompt "A cat walking on the beach at sunset, cinematic lighting, high quality" \
+    --negative-prompt "Bright tones, overexposed, static, blurred details, subtitles, style, works, paintings, images, static, overall gray, worst quality, low quality, JPEG compression residue, ugly, incomplete, extra fingers, poorly drawn hands, poorly drawn faces, deformed, disfigured, misshapen limbs, fused fingers, still picture, messy background, three legs, many people in the background, walking backwards" \
+    --height 384 \
+    --width 640 \
+    --num-frames 33 \
+    --num-inference-steps 50 \
+    --guidance-scale 5.0
   ```
 </details>
 
