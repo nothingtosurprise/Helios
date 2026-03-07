@@ -695,9 +695,7 @@ class HeliosPipeline(DiffusionPipeline, HeliosLoraLoaderMixin):
                 beta = alpha * (1 - ori_sigma) / math.sqrt(gamma)
 
                 batch_size, channel, num_frames, height, width = latents.shape
-                noise = self.sample_block_noise(
-                    batch_size, channel, num_frames, height, width, patch_size, device
-                )
+                noise = self.sample_block_noise(batch_size, channel, num_frames, height, width, patch_size, device)
                 noise = noise.to(device=device, dtype=transformer_dtype)
                 latents = alpha * latents + beta * noise  # To fix the block artifact
 
@@ -1153,8 +1151,11 @@ class HeliosPipeline(DiffusionPipeline, HeliosLoraLoaderMixin):
 
         if not is_enable_stage2:
             patch_size = self.transformer.config.patch_size
-            image_seq_len = num_latent_frames_per_chunk * (height // self.vae_scale_factor_spatial) * (width // self.vae_scale_factor_spatial) // (
-                patch_size[0] * patch_size[1] * patch_size[2]
+            image_seq_len = (
+                num_latent_frames_per_chunk
+                * (height // self.vae_scale_factor_spatial)
+                * (width // self.vae_scale_factor_spatial)
+                // (patch_size[0] * patch_size[1] * patch_size[2])
             )
             sigmas = np.linspace(0.999, 0.0, num_inference_steps + 1)[:-1] if sigmas is None else sigmas
             mu = calculate_shift(
