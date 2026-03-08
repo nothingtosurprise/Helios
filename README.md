@@ -183,15 +183,18 @@ Before trying your own inputs, we highly recommend going through the sanity chec
 | **T2V** | <video src="https://github.com/user-attachments/assets/14e10753-0366-4790-ad8f-7b66d821ed11" controls width="240"></video> | <video src="https://github.com/user-attachments/assets/c1778691-a80b-428c-8094-88bb1dd1d52b" controls width="240"></video> | <video src="https://github.com/user-attachments/assets/4ca28c79-9dfa-49de-9c3a-f4c7b6c766cd" controls width="240"></video> |
 | **V2V** | <video src="https://github.com/user-attachments/assets/420cb572-85c2-42d8-98d7-37b0bc24c844" controls width="240"></video> | <video src="https://github.com/user-attachments/assets/7d703fa6-dc1a-4138-a897-e58cfd9236d6" controls width="240"></video> | <video src="https://github.com/user-attachments/assets/45329c55-1a25-459c-bbf0-4e584ec5b23d" controls width="240"></video> |
 
-### ✨ Parallel Inference on Multiple GPUs
-For example, let's take Helios-Base with 2 GPUs.
+### ✨ Context Parallelism on Multiple GPUs
+Helios supports various Context Parallelism mechanisms, including Ulysses Attention, Ring Attention, Unified Attention, and Ulysses Anything Attention. For more details, please refer to the [documentation](https://huggingface.co/docs/diffusers/v0.37.0/en/training/distributed_inference#context-parallelism).
+
+For example, let's take Helios-Base with 4 GPUs.
 
 <details>
   <summary>Click to expand the code</summary>
 
   ```bash
-  CUDA_VISIBLE_DEVICES=0,1 torchrun --nproc_per_node 2 infer_helios.py \
-      --enable_parallelism \
+  CUDA_VISIBLE_DEVICES=0,1,2,3 torchrun --nproc_per_node 4 infer_helios.py \
+      --enable_parallelism \     #  remember to enable this config
+      --cp_backend "ulysses" \   #  ["ring", "ulysses", "unified", "ulysses_anything"]
       --base_model_path "BestWishYsh/Helios-Base" \
       --transformer_path "BestWishYsh/Helios-Base" \
       --sample_type "t2v" \

@@ -139,6 +139,16 @@ def parse_args():
         default=None,
     )
 
+    # === Context parallelism ===
+    # Please refer to https://huggingface.co/docs/diffusers/v0.37.0/en/training/distributed_inference#context-parallelism
+    parser.add_argument(
+        "--cp_backend",
+        type=str,
+        choices=["ring", "ulysses", "unified", "ulysses_anything"],
+        default="ulysses",
+        help="Context parallel backend to use.",
+    )
+
     return parser.parse_args()
 
 
@@ -159,7 +169,10 @@ def main():
     os.makedirs(args.output_folder, exist_ok=True)
 
     if dist.is_available() and "RANK" in os.environ:
-        dist.init_process_group(backend="nccl")
+        if args.cp_backend == "ulysses_anything":
+            dist.init_process_group(backend="cpu:gloo,cuda:nccl")
+        else:
+            dist.init_process_group(backend="nccl")
         rank = dist.get_rank()
         device = torch.device("cuda", rank % torch.cuda.device_count())
         world_size = dist.get_world_size()
@@ -271,8 +284,18 @@ def main():
         pipe = pipe.to(device)
 
     if world_size > 1 and args.enable_parallelism:
-        # transformer.set_attention_backend("flash")
-        pipe.transformer.enable_parallelism(config=ContextParallelConfig(ulysses_degree=world_size))
+        if args.cp_backend == "ring":
+            cp_config = ContextParallelConfig(ring_degree=world_size)
+        elif args.cp_backend == "unified":
+            cp_config = ContextParallelConfig(ring_degree=world_size // 2, ulysses_degree=world_size // 2)
+        elif args.cp_backend == "ulysses":
+            cp_config = ContextParallelConfig(ulysses_degree=world_size)
+        elif args.cp_backend == "ulysses_anything":
+            cp_config = ContextParallelConfig(ulysses_degree=world_size, ulysses_anything=True)
+        else:
+            raise ValueError(f"Unsupported cp_backend: {args.cp_backend}")
+
+        pipe.transformer.enable_parallelism(config=cp_config)
 
     if args.debug_mode:
 
