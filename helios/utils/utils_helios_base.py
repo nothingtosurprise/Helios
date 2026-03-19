@@ -289,6 +289,10 @@ def corrupt_history_latents(
         f"corrupt_mode must be 'noise', 'downsample', or 'random', got '{corrupt_mode}'"
     )
 
+    clean_random = random.random()
+    if clean_random < noise_corrupt_clean_prob:
+        return latents_history_short, latents_history_mid, latents_history_long
+    
     # ==================== choose mode ====================
     if corrupt_mode == "random":
         mode = "noise" if random.random() < noise_mode_prob else "downsample"
@@ -297,10 +301,6 @@ def corrupt_history_latents(
 
     # ==================== noise branch ====================
     if mode == "noise":
-        clean_random = random.random()
-        if clean_random < noise_corrupt_clean_prob:
-            return latents_history_short, latents_history_mid, latents_history_long
-
         batch_size = latents_history_short.shape[0]
         if not is_frame_independent and not is_chunk_independent:
             noise_sigma = get_corrupt_noise_sigma(
